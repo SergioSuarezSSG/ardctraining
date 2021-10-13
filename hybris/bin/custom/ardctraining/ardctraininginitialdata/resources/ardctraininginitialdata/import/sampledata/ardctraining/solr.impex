@@ -1,0 +1,23 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+#
+# Import the Solr configuration for the store
+#
+$productCatalog = electronicsProductCatalog
+$catalogVersions = catalogVersions(catalog(id), version);
+$facetSearchConfigName = electronicsIndex
+$facetSearchConfigDescription = Electronics Solr Index
+$searchIndexNamePrefix = electronics
+$solrIndexedType = electronicsProductType
+$indexBaseSite = electronics
+$indexLanguages = ja, en, de, zh
+$indexCurrencies = JPY, USD
+
+# Other facet properties
+INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); sortableType(code); currency[default = false]; localized[default = false]; multiValue[default = false]; facet[default = true]; facetType(code); facetSort(code); priority; visible; useForSpellchecking[default = false]; useForAutocomplete[default = false]; fieldValueProvider       ; facetDisplayNameProvider; customFacetSortProvider; topValuesProvider        ; rangeSets(name)
+                                 ; $solrIndexedType                          ; customLabel        ; string    ;                   ;                          ;                           ; true                       ;                      ; MultiSelectOr  ; Alpha          ; 4000    ; true   ;                                     ;                                    ; customLabelValueProvider ;                         ;                        ; defaultTopValuesProvider ;
+
+# Non-facet search query properties
+INSERT_UPDATE SolrSearchQueryProperty ; indexedProperty(name, solrIndexedType(identifier))[unique=true] ; searchQueryTemplate(name, indexedType(identifier))[unique=true][default=DEFAULT:$solrIndexedType] ; facet ; ftsPhraseQuery[default=false] ; ftsPhraseQueryBoost ; ftsQuery[default=false] ; ftsQueryBoost ; ftsFuzzyQuery[default=false] ; ftsFuzzyQueryBoost ; ftsWildcardQuery[default=false] ; ftsWildcardQueryType(code)[default=POSTFIX] ; ftsWildcardQueryBoost ; ftsWildcardQueryMinTermLength ; includeInResponse[default=true] ; useForHighlighting[default=false]
+                                      ; customLabel:$solrIndexedType                                    ;                                                                                                   ;       ; TRUE                          ; 40                  ; TRUE                    ; 20            ; TRUE                         ; 10                 ;                                 ;                                             ;                       ;                               ;                                 ;

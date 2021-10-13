@@ -182,4 +182,83 @@
 	</bean>
 
 	<bean id="genderData" class="com.ardctraining.facades.product.data.GenderData" scope="prototype"/>
+
+	<!-- BEGIN custom beans -->
+	<alias name="defaultJobRolePopulator" alias="jobRolePopulator" />
+	<bean id="defaultJobRolePopulator" class="com.ardctraining.facades.populators.JobRolePopulator" />
+
+	<alias name="deafultJobRoleConverter" alias="jobRoleConverter" />
+	<bean id="deafultJobRoleConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.ardctraining.facades.customer.data.JobRoleData" />
+		<property name="populators">
+			<list>
+				<ref bean="jobRolePopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<alias name="defaultArdctrainingCustomerFacade" alias="customerFacade" />
+	<bean id="defaultArdctrainingCustomerFacade"
+		  class="com.ardctraining.facades.customer.impl.DefaultArdctrainingCustomerFacade"
+		  parent="defaultCustomerFacade">
+		<property name="ardctrainingJobRoleService" ref="ardctrainingJobRoleService" />
+		<property name="jobRoleConverter" ref="jobRoleConverter" />
+	</bean>
+
+	<alias name="defaultCustomProductLabelPopulator" alias="customProductLabelPopulator"/>
+	<bean id="defaultCustomProductLabelPopulator" class="com.ardctraining.facades.populators.CustomProductLabelPopulator"/>
+
+	<alias name="defaultCustomProductLabelConverter" alias="customProductLabelConverter" />
+	<bean id="defaultCustomProductLabelConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.ardctraining.facades.product.data.CustomProductLabelData" />
+		<property name="populators">
+			<list>
+				<ref bean="customProductLabelPopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<alias name="defaultArdcTrainingProductFacade" alias="productFacade"/>
+	<bean id="defaultArdcTrainingProductFacade" class="com.ardctraining.facades.product.imp.DefaultArdctrainingProductFacade"
+		  parent="defaultProductFacade">
+		<property name="customProductLabelService" ref="customProductLabelService"/>
+		<property name="customProductLabelDataConverter" ref="customProductLabelConverter"/>
+	</bean>
+
+	<alias name="ardcTrainingSearchResultVarianPopulator" alias="commerceSearchResultProductPopulator"/>
+	<bean id="ardcTrainingSearchResultVarianPopulator" class="com.ardctraining.facades.populators.ArdcTrainingSearchResultVarianPopulator"
+		  parent="variantCommerceSearchResultProductPopulator">
+		<property name="userService" ref="userService"/>
+	</bean>
+
+	<bean id="customProductLabelCleanupEmailContext" class="com.ardctraining.facades.process.email.context.CustomProductLabelCleanupEmailContext"
+		parent="abstractEmailContext">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+	<alias name="defaultArdcTrainingCustomerFeedbackFacade" alias="customerFeedbackFacade"/>
+	<bean id="defaultArdcTrainingCustomerFeedbackFacade" class="com.ardctraining.facades.customerfeedback.imp.DefaultArdcTrainingCustomerFeedbackFacade"
+		  parent="defaultCustomerFacade">
+		<property name="customerFeedbackService" ref="customerFeedbackService"/>
+		<property name="customerFeedbackConverter" ref="customerFeedbackConverter"/>
+	</bean>
+
+	<alias name="defaultCustomerFeedbackPopulator" alias="customerFeedbackPopulator"/>
+	<bean id="defaultCustomerFeedbackPopulator" class="com.ardctraining.facades.populators.CustomerFeedbackPopulator"/>
+
+	<alias name="defaultCustomerFeedbackConverter" alias="customerFeedbackConverter" />
+	<bean id="defaultCustomerFeedbackConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.ardctraining.facades.customer.data.CustomerFeedbackData" />
+		<property name="populators">
+			<list>
+				<ref bean="customerFeedbackPopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="customerFeedbackEmailContext" class="com.ardctraining.facades.process.email.context.CustomerFeedbackEmailContext"
+		  parent="abstractEmailContext">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+	<!-- END custom beans -->
 </beans>

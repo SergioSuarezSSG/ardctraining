@@ -1,0 +1,2 @@
+## messageSource=classpath:/ardctrainingcore/messages/email-customerFeedback_$lang.properties
+${ctx.messages.getMessage('emailSubject')}

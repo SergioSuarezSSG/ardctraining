@@ -157,6 +157,11 @@ public interface ControllerConstants
 			{
 				String ImportCSVSavedCartPage = "pages/csv/importCSVSavedCartPage"; // NOSONAR
 			}
+
+			interface Feedback
+			{
+				String FeedbackPage = "pages/feedback/feedbackPage";
+			}
 		}
 
 		interface Fragments

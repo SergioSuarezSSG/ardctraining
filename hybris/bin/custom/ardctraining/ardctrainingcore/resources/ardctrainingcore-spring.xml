@@ -538,4 +538,105 @@
 		<property name="itemCleanupHooks" ref="csTicketRetentionHooks"/>
 		<property name="ticketBusinessService" ref="ticketBusinessService"/>
 	</bean>
+
+	<!-- BEGIN custom beans -->
+	<alias name="defaultArdctrainingJobRoleDao" alias="ardctrainingJobRoleDao" />
+	<bean id="defaultArdctrainingJobRoleDao" class="com.ardctraining.core.customer.dao.impl.DefaultArdctrainingJobRoleDao" />
+
+	<alias name="defaultArdctrainingJobRoleService" alias="ardctrainingJobRoleService" />
+	<bean id="defaultArdctrainingJobRoleService" class="com.ardctraining.core.customer.service.impl.DefaultArdctrainingJobRoleService">
+		<property name="ardctrainingJobRoleDao" ref="ardctrainingJobRoleDao" />
+	</bean>
+
+	<bean id="customProductLabelPrepareInterceptor" class="com.ardctraining.core.interceptor.CustomProductLabelPrepareInterceptor"/>
+
+	<bean id="customProductLabelPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="customProductLabelPrepareInterceptor"/>
+		<property name="typeCode" value="CustomProductLabel"/>
+	</bean>
+
+	<alias name="defaultCustomProductLabelDao" alias="customProductLabelDao"/>
+	<bean id="defaultCustomProductLabelDao" class="com.ardctraining.core.product.dao.imp.DefaultCustomProductLabelDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<alias name="defaultCustomProductLabelService" alias="customProductLabelService"/>
+	<bean id="defaultCustomProductLabelService" class="com.ardctraining.core.product.service.imp.DefaultCustomProductLabelService">
+		<property name="customProductLabelDao" ref="customProductLabelDao"/>
+		<property name="timeService" ref="timeService"/>
+	</bean>
+
+	<alias name="defaultCustomProductLabelCleanupJobPerformable" alias="customProductLabelCleanupJobPerformable"/>
+	<bean id="defaultCustomProductLabelCleanupJobPerformable"
+		  class="com.ardctraining.core.job.CustomProductLabelCleanupJobPerformable"
+		  parent="abstractJobPerformable">
+		<property name="customProductLabelService" ref="customProductLabelService"/>
+		<property name="timeService" ref="timeService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
+
+	<alias name="defaultCustomLabelValueProvider" alias="customLabelValueProvider"/>
+	<bean id="defaultCustomLabelValueProvider" class="com.ardctraining.core.search.solrfacetsearch.provider.impl.CustomProductLabelValueProvider"
+		  parent="abstractPropertyFieldValueProvider">
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+		<property name="customProductLabelService" ref="customProductLabelService"/>
+	</bean>
+
+	<bean id="customLabelCleanupEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
+		<property name="resource" value="classpath:/ardctrainingcore/processes/sendCustomLabelCleanupEmailProcess.xml"/>
+	</bean>
+
+	<bean id="generateCustomLabelCleanupEmail" parent="abstractGenerateEmailAction">
+		<property name="frontendTemplateName" value="CustomProductLabelCleanupEmailTemplate" />
+	</bean>
+
+	<bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
+		<property name="key">
+			<value type="java.lang.Class">
+				com.ardctraining.core.model.CustomProductLabelCleanupEmailProcessModel
+			</value>
+		</property>
+		<property name="value" ref="storeFrontProcessContextStrategy"/>
+	</bean>
+
+	<bean id="customerFeedbackStatusHandler" class="com.ardctraining.core.attributeHandlers.CustomerFeedbackStatusHandler">
+		<property name="timeService" ref="timeService"/>
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+	<alias name="defaultCustomerFeedbackDao" alias="customerFeedbackDao"/>
+	<bean id="defaultCustomerFeedbackDao" class="com.ardctraining.core.feedback.dao.imp.DefaultCustomerFeedbackDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<alias name="defaultCustomerFeedbackService" alias="customerFeedbackService"/>
+	<bean id="defaultCustomerFeedbackService" class="com.ardctraining.core.feedback.service.imp.DefaultCustomerFeedbackService">
+		<property name="defaultCustomerFeedbackDao" ref="customerFeedbackDao"/>
+		<property name="modelService" ref="defaultModelService"/>
+		<property name="timeService" ref="timeService"/>
+		<property name="defaultEmailService" ref="defaultEmailService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="commerceCommonI18NService" ref="commerceCommonI18NService"/>
+	</bean>
+
+	<bean id="customerFeedbackEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
+		<property name="resource" value="classpath:/ardctrainingcore/processes/sendCustomerFeedbackEmailProcess.xml"/>
+	</bean>
+
+	<bean id="generateCustomerFeedbackEmail" parent="abstractGenerateEmailAction">
+		<property name="frontendTemplateName" value="CustomerFeedbackEmailTemplate" />
+	</bean>
+
+    <bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
+        <property name="key">
+            <value type="java.lang.Class">
+                com.ardctraining.core.model.CustomerFeedbackEmailProcessModel
+            </value>
+        </property>
+        <property name="value" ref="storeFrontProcessContextStrategy"/>
+    </bean>
+	<!-- END custom beans -->
+
 </beans>

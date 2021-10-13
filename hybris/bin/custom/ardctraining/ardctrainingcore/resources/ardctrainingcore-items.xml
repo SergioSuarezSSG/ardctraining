@@ -2,12 +2,16 @@
 <!--
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
+
+<!-- last typecode = 10603 -->
 <items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
 
     <collectiontypes>
         <collectiontype code="GenderList" elementtype="Gender" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
                         type="set"/>
+        <collectiontype code="CustomLabelSet" elementtype="java.lang.String" autocreate="true" generate="true" type="set"/>
+        <collectiontype code="CustomerFeedbackSet" elementtype="java.lang.String" autocreate="true" generate="true" type="set"/>
     </collectiontypes>
 
     <enumtypes>
@@ -25,11 +29,169 @@
             <value code="WHITE"/>
             <value code="YELLOW"/>
         </enumtype>
+
+        <enumtype code="CustomLabelTypeEnum" generate="true" autocreate="true" dynamic="true">
+            <value code="PRIMARY"/>
+            <value code="SECONDARY"/>
+            <value code="ALTERNATIVE"/>
+        </enumtype>
+
+        <enumtype code="FeedbackStatusEnum" generate="true" autocreate="true" dynamic="true">
+            <value code="NOT_READ"/>
+            <value code="READ"/>
+            <value code="PASTDUE"/>
+            <value code="READ_PASTDUE"/>
+        </enumtype>
     </enumtypes>
 
     <itemtypes>
 
         <!-- Add your item definitions here -->
+
+        <typegroup name="ardctraining">
+
+            <itemtype code="CustomerFeedback" autocreate="true" generate="true"
+                      jaloclass="com.ardctraining.core.jalo.CustomerFeedback">
+                <deployment table="custfeedback" typecode="10603"/>
+                <attributes>
+                    <attribute qualifier="customer" type="Customer">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="read" type="java.lang.Boolean">
+                        <defaultvalue>false</defaultvalue>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="subject" type="java.lang.String">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="message" type="java.lang.String">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="submittedDate" type="java.util.Date">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="status" type="FeedbackStatusEnum">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="dynamic" attributeHandler="customerFeedbackStatusHandler"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CostumProductLabel" autocreate="true" generate="true"
+                      jaloclass="com.ardctraining.core.jalo.CostumProductLabel">
+                <deployment table="custprodlabel" typecode="10602"/>
+                <attributes>
+                    <attribute qualifier="label" type="java.lang.String">
+                        <modifiers read="true" write="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="labelType" type="CustomLabelTypeEnum">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="validityDate" type="java.util.Date">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="customer" type="Customer">
+                        <modifiers read="true" write="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="product" type="Product">
+                        <modifiers read="true" write="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="pk_custprodlabel" unique="true">
+                        <key attribute="label"/>
+                        <key attribute="customer"/>
+                        <key attribute="product"/>
+                    </index>
+                </indexes>
+            </itemtype>
+
+            <itemtype code="Customer" autocreate="false" generate="false">
+                <attributes>
+                    <attribute qualifier="company" type="java.lang.String">
+                        <modifiers write="true" read="true" />
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="jobRole" type="JobRole">
+                        <modifiers write="true" read="true" />
+                        <persistence type="property" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="JobRole"
+                      autocreate="true"
+                      generate="true"
+                      jaloclass="com.ardctraining.core.jalo.JobRole">
+                <description>Customer's job role</description>
+                <deployment table="jobrole" typecode="10601" />
+                <attributes>
+                    <attribute qualifier="code" type="java.lang.String">
+                        <modifiers read="true" write="true" unique="true" />
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="description" type="java.lang.String">
+                        <modifiers write="true" read="true" />
+                        <persistence type="property" />
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="pk_jobrole" unique="true">
+                        <key attribute="code" />
+                    </index>
+                </indexes>
+            </itemtype>
+
+            <itemtype code="CustomProductLabelCleanupCronjob"
+                      generate="true"
+                      autocreate="true"
+                      extends="CronJob">
+            </itemtype>
+
+            <itemtype code="CustomProductLabelCleanupEmailProcess"
+                      generate="true"
+                      autocreate="true"
+                      extends="StoreFrontProcess">
+                <attributes>
+                    <attribute qualifier="customLabels" type="CustomLabelSet">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="language" type="Language">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CustomerFeedbackEmailProcess"
+                      generate="true"
+                      autocreate="true"
+                      extends="StoreFrontProcess">
+                <attributes>
+                    <attribute qualifier="customerFeedbacks" type="CustomerFeedbackSet">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="language" type="Language">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+        </typegroup>
+
 
 
         <!-- TypeGroups are for structure of this file only -->

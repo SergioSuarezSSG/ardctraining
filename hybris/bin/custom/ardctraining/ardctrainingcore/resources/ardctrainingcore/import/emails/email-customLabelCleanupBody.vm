@@ -1,0 +1,54 @@
+## messageSource=classpath:/ardctrainingcore/messages/email-customLabelCleanup_$lang.properties
+<html>
+<head>
+    <style type="text/css">
+        body {
+            font: 12px Arial, Helvetica, sans-serif;
+            color: black;
+        }
+        table {
+            border-collapse: collapse;
+            font: 12px Arial, Helvetica, sans-serif;
+        }
+        td, th {
+            padding: 5px;
+            border: black 1px solid;
+        }
+        th {
+            background-color: #1b6ca8;
+            color: white;
+        }
+    </style>
+</head>
+<body bgcolor="#ffffff">
+
+<p>${ctx.messages.getMessage('message.line1')}<br />${ctx.messages.getMessage('message.line2')}</p>
+<p>${ctx.messages.getMessage('message.results.size')} ${ctx.size}</p>
+<p>${ctx.messages.getMessage('message.results.entries')}</p>
+
+<table width="80%" cellpadding="0" cellspacing="0" border="0">
+    <thead>
+    <th>${ctx.messages.getMessage('table.header.customer')}</th>
+    <th>${ctx.messages.getMessage('table.header.product')}</th>
+    <th>${ctx.messages.getMessage('table.header.label')}</th>
+    <th>${ctx.messages.getMessage('table.header.labeltype')}</th>
+    </thead>
+    <tbody>
+        #foreach ( $label in ${ctx.labels} )
+        <tr>
+            <td>${label.get('customer')}</td>
+            <td>${label.get('product')}</td>
+            <td>${label.get('label')}</td>
+            <td>${label.get('labeltype')}</td>
+        </tr>
+        #end
+    </tbody>
+</table>
+
+<p>
+    <strong>${ctx.messages.getMessage('message.regards')} <br />
+        ${ctx.messages.getMessage('message.line3')}</strong>
+</p>
+
+</body>
+</html>

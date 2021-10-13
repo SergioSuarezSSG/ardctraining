@@ -21,6 +21,7 @@
 
 <li class="${fn:escapeXml(productTagClasses)}">
 	<ycommerce:testId code="test_searchPage_wholeProduct">
+	    <product:customProductLabel customLabels="${product.labels}" />
 		<a class="product__list--thumb" href="${fn:escapeXml(productUrl)}" title="${fn:escapeXml(product.name)}" >
 			<product:productPrimaryImage product="${product}" format="thumbnail"/>
 		</a>

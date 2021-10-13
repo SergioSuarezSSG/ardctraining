@@ -1,0 +1,2 @@
+## messageSource=classpath:/ardctrainingcore/messages/email-customLabelCleanup_$lang.properties
+${ctx.messages.getMessage('emailSubject')}
